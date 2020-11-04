@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf_exam.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flavon <flavon@student.42.fr>              +#+  +:+       +#+        */
+/*   By: flavon <flavon@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/31 13:43:55 by flavon            #+#    #+#             */
-/*   Updated: 2020/10/31 15:42:45 by flavon           ###   ########.fr       */
+/*   Updated: 2020/11/05 01:13:18 by flavon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <limits.h>
 
 int g_width;
 int g_result;
@@ -62,7 +63,7 @@ int		ft_strlen(char *dst)
 	return(i);
 }
 
-int		ft_strlen_int(long long n, int base)
+int		ft_strlen_int(unsigned int n, int base)
 {
 	int i = 0;
 	while ((n /= base) != 0)
@@ -70,7 +71,7 @@ int		ft_strlen_int(long long n, int base)
 	return (++i);
 }
 
-char	*ft_itoa(long long nbr, int base)
+char	*ft_itoa(unsigned int nbr, int base)
 {
 	char *res;
 	int len = ft_strlen_int(nbr, base);
@@ -85,17 +86,18 @@ char	*ft_itoa(long long nbr, int base)
 	}
 	return (res);
 }
+
 void	ft_int(int n)
 {
 	int i = 0;
 	long long nbr = n;
 	if (n == 0 && g_presicion >= 0)
+	{
 		while (g_width-- > 0)
-		{
 			ft_putchar(' ');
-			return ;
-		}
-	if (g_presicion >= 0 && n < 0) {g_width--; nbr *= -1;}
+		return ;
+	}
+	if (n < 0) {g_width--; nbr *= -1;}
 	char *str = ft_itoa(nbr, 10);
 	int len = ft_strlen(str);
 	if (g_presicion >= 0 && g_presicion > len)
@@ -111,6 +113,7 @@ void	ft_int(int n)
 			ft_putchar('0');
 	while (len--)
 		ft_putchar(str[i++]);
+	free(str);
 }
 
 void	ft_hex(unsigned int n)
@@ -118,11 +121,11 @@ void	ft_hex(unsigned int n)
 	int i = 0;
 	long long nbr = n;
 	if (n == 0 && g_presicion >= 0)
+	{
 		while (g_width-- > 0)
-		{
 			ft_putchar(' ');
-			return ;
-		}
+		return ;
+	}
 	char *str = ft_itoa(nbr, 16);
 	int len = ft_strlen(str);
 	if (g_presicion >= 0 && g_presicion > len)
@@ -136,16 +139,25 @@ void	ft_hex(unsigned int n)
 			ft_putchar('0');
 	while (len--)
 		ft_putchar(str[i++]);
+	free(str);
+}
+
+void	ft_putstr(char *str, int len)
+{
+	while (len--)
+		ft_putchar(*str++);
 }
 
 void	ft_str(char *dst)
 {
 	int i = 0;
+	if (dst == NULL)
+		dst = "(null)";
 	int length = ft_strlen(dst);
 	if (g_presicion >= 0 && g_presicion < length)
 		length = g_presicion;
 	if (g_presicion >= 0)
-		while (g_width-- - g_presicion > 0)
+		while (g_width-- - length > 0)
 			ft_putchar(' ');
 	else
 		while (g_width-- - length > 0)
@@ -190,9 +202,47 @@ int ft_printf(char const *format, ...)
 	return (g_result);
 }
 
-int main(void)
+int	main(void)
 {
-	ft_printf("Hello, %123d\n", -0);
-	printf("Hello, %123d\n", -0);
-	return(0);
+	ft_printf("[%s]\n", "abcd");
+	printf("[%s]\n", "abcd");
+	ft_printf("[%5s]\n", "abcd");
+	printf("[%5s]\n", "abcd");
+	ft_printf("[%.2s]\n", "abcd");
+	printf("[%.2s]\n", "abcd");
+	ft_printf("[%5.2s]\n", "abcd");
+	printf("[%5.2s]\n", "abcd");
+
+
+	ft_printf("\n[%d]\n", INT_MAX);
+	printf("[%d]\n", INT_MAX);
+	ft_printf("[%20d]\n", INT_MAX);
+	printf("[%20d]\n", INT_MAX);
+	ft_printf("[%.20d]\n", INT_MAX);
+	printf("[%.20d]\n", INT_MAX);
+	ft_printf("[%30.20d]\n", INT_MAX);
+	printf("[%30.20d]\n", INT_MAX);
+
+	ft_printf("\n[%d]\n", INT_MIN);
+	printf("[%d]\n", INT_MIN);
+	ft_printf("[%20d]\n", INT_MIN);
+	printf("[%20d]\n", INT_MIN);
+	ft_printf("[%.20d]\n", INT_MIN);
+	printf("[%.20d]\n", INT_MIN);
+	ft_printf("[%30.20d]\n", INT_MIN);
+	printf("[%30.20d]\n", INT_MIN);
+	ft_printf("[%4.d]\n", 0);
+	printf("[%4.d]\n", 0);
+
+
+	ft_printf("\n[%x]\n", 42);
+	printf("[%x]\n", 42);
+	ft_printf("[%4x]\n", 42);
+	printf("[%4x]\n", 42);
+	ft_printf("[%.4x]\n", 42);
+	printf("[%.4x]\n", 42);
+	ft_printf("[%5.4x]\n", 42);
+	printf("[%5.4x]\n", 42);
+	ft_printf("[%4.x]\n", 0);
+	printf("[%4.x]\n", 0);
 }
