@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 {
 	FILE *file;
 	if (argc != 2) {write (1, "Error: argument\n", 16); return (1);}
-	if (!(file = fopen(argv[1], "r")) || parser(file)) { write(1, "Error: Operation file corrupted\n", 32); return (1); }
+	if (!(file = fopen(argv[1], "r")) || parser(file)) { write(1, "Error: Operation file corrupted\n", 32); free(draw); fclose(file); return (1); }
 	output();
 	fclose(file);
 	free(draw);
